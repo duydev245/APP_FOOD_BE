@@ -1,0 +1,188 @@
+
+
+-- tao_bang_food_type
+CREATE TABLE food_type (
+    type_id INT AUTO_INCREMENT PRIMARY KEY,
+    type_name VARCHAR(255)
+);
+
+-- Thêm dữ liệu vào bảng food_type
+INSERT INTO food_type (type_name) VALUES 
+('Appetizers'),
+('Main Course'),
+('Desserts'),
+('Beverages'),
+('Salads'),
+('Sushi'),
+('Pizza');
+
+-- tao_bang_food
+CREATE TABLE food (
+    food_id INT AUTO_INCREMENT PRIMARY KEY,
+    food_name VARCHAR(255),
+    image VARCHAR(255),
+    price FLOAT,
+    description VARCHAR(255),
+    type_id INT,
+    FOREIGN KEY (type_id) REFERENCES food_type(type_id)
+);
+
+-- Thêm dữ liệu vào bảng food
+INSERT INTO food (food_name, image, price, description, type_id) VALUES 
+('Chicken Wings', 'wings.jpg', 9.99, 'Spicy chicken wings', 1),
+('Steak', 'steak.jpg', 19.99, 'Grilled sirloin steak', 2),
+('Chocolate Cake', 'cake.jpg', 6.99, 'Rich chocolate cake', 3),
+('Soda', 'soda.jpg', 1.99, 'Carbonated beverage', 4),
+('Caesar Salad', 'salad.jpg', 7.99, 'Fresh salad with Caesar dressing', 5),
+('California Roll', 'sushi.jpg', 12.99, 'Sushi with avocado and crab', 6),
+('Margherita Pizza', 'pizza.jpg', 11.99, 'Classic pizza with tomato and mozzarella', 7);
+
+--tao_bang_sub_food
+CREATE TABLE sub_food (
+    sub_id INT AUTO_INCREMENT PRIMARY KEY,
+    sub_name VARCHAR(255),
+    sub_price FLOAT,
+    food_id INT,
+    FOREIGN KEY (food_id) REFERENCES food(food_id)
+);
+
+-- Thêm dữ liệu vào bảng sub_food
+INSERT INTO sub_food (sub_name, sub_price, food_id) VALUES 
+('BBQ Sauce', 1.99, 1),
+('Mashed Potatoes', 2.99, 2),
+('Vanilla Ice Cream', 1.49, 3),
+('Coke', 1.49, 4),
+('Croutons', 0.99, 5),
+('Wasabi', 0.99, 6),
+('Extra Cheese', 1.99, 7);
+
+--tao_bang_users
+CREATE TABLE users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    full_name VARCHAR(255),
+    email VARCHAR(255),
+    password VARCHAR(255)
+);
+
+-- Thêm dữ liệu vào bảng users
+INSERT INTO users (full_name, email, password) VALUES 
+('John Doe', 'john@example.com', 'password123'),
+('Jane Smith', 'jane@example.com', 'securepassword'),
+('Alice Johnson', 'alice@example.com', 'password456'),
+('Bob Wilson', 'bob@example.com', 'letmein');
+
+--tao_bang_orders
+CREATE TABLE orders (
+    user_id INT,
+    food_id INT,
+    amount INT,
+    code VARCHAR(255),
+    arr_sub_id VARCHAR(255),
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (food_id) REFERENCES food(food_id)
+);
+
+ALTER TABLE orders 
+ADD PRIMARY KEY (user_id, food_id);
+
+-- Thêm dữ liệu vào bảng orders
+INSERT INTO orders (user_id, food_id, amount, code, arr_sub_id) VALUES 
+(2, 4, 1, 'ORDER124', '3'),
+(3, 1, 3, 'ORDER125', '2,4'),
+(1, 2, 2, 'ORDER126', '1'),
+(4, 5, 1, 'ORDER127', '5'),
+(2, 3, 2, 'ORDER128', '2,3');
+
+-- tao_bang_restaurant
+CREATE TABLE restaurant (
+    res_id INT PRIMARY KEY AUTO_INCREMENT,
+    res_name VARCHAR(255),
+    image VARCHAR(255),
+    description VARCHAR(255)
+);
+
+-- Thêm dữ liệu vào bảng restaurant
+INSERT INTO restaurant (res_name, image, description) VALUES 
+('The Grill House', 'grill.jpg', 'A classic steakhouse'),
+('Café Sweet Treats', 'cafe.jpg', 'Dessert heaven'),
+('Sushi Delight', 'sushi.jpg', 'Sushi and Japanese cuisine'),
+('Pizza Palace', 'pizza.jpg', 'Your go-to pizza place');
+
+-- tao_bang_rate_res
+CREATE TABLE rate_res (
+    user_id INT,
+    res_id INT,
+    amount INT,
+    date_rate DATETIME,
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (res_id) REFERENCES restaurant(res_id)
+);
+ALTER TABLE rate_res 
+ADD PRIMARY KEY (user_id, res_id);
+
+-- Thêm dữ liệu vào bảng rate_res
+INSERT INTO rate_res (user_id, res_id, amount, date_rate) VALUES 
+(1, 1, 5, '2023-11-06 10:00:00'),
+(2, 1, 4, '2023-11-06 11:30:00'),
+(1, 2, 4, '2023-11-06 12:45:00'),
+(2, 3, 5, '2023-11-06 14:15:00'),
+(3, 1, 4, '2023-11-07 14:00:00'),
+(4, 1, 5, '2023-11-07 15:30:00'),
+(3, 2, 4, '2023-11-08 10:00:00'),
+(4, 2, 3, '2023-11-08 11:30:00');
+
+-- tao_bang_like_res
+CREATE TABLE like_res (
+    user_id INT,
+    res_id INT,
+    date_like DATETIME,
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (res_id) REFERENCES restaurant(res_id)
+);
+
+ALTER TABLE like_res 
+ADD PRIMARY KEY (user_id, res_id);
+
+-- Thêm dữ liệu vào bảng like_res
+INSERT INTO like_res (user_id, res_id, date_like) VALUES 
+(1, 1, '2023-11-06 12:15:00'),
+(2, 1, '2023-11-06 13:45:00'),
+(1, 3, '2023-11-06 10:30:00'),
+(2, 4, '2023-11-06 09:00:00'),
+(3, 1, '2023-11-06 15:30:00'),
+(4, 2, '2023-11-07 09:00:00'),
+(3, 3, '2023-11-08 12:15:00'),
+(4, 4, '2023-11-08 15:30:00');
+
+--Tìm 5 người đã like nhà hàng nhiều nhất
+SELECT users.user_id, users.full_name, COUNT(like_res.res_id) AS like_count
+FROM users
+INNER JOIN like_res ON users.user_id = like_res.user_id
+GROUP BY users.user_id, users.full_name
+ORDER BY like_count DESC
+LIMIT 5;
+
+--Tìm 2 nhà hàng có lượt like nhiều nhất.
+SELECT restaurant.res_id, restaurant.res_name, COUNT(like_res.res_id) AS like_count
+FROM restaurant
+LEFT JOIN like_res ON restaurant.res_id = like_res.res_id
+GROUP BY restaurant.res_id, restaurant.res_name
+ORDER BY like_count DESC
+LIMIT 2;
+
+--Tìm người đã đặt hàng nhiều nhất.
+SELECT users.user_id, users.full_name, COUNT(orders.user_id) AS order_count
+FROM users
+LEFT JOIN orders ON users.user_id = orders.user_id
+GROUP BY users.user_id, users.full_name
+ORDER BY order_count DESC
+LIMIT 1;
+
+--Tìm người dùng không hoạt động trong hệ thống
+SELECT users.full_name
+FROM users
+LEFT JOIN orders ON users.user_id = orders.user_id
+LEFT JOIN like_res ON users.user_id = like_res.user_id
+LEFT JOIN rate_res ON users.user_id = rate_res.user_id
+WHERE orders.user_id IS NULL AND like_res.user_id IS NULL AND rate_res.user_id IS NULL;
+
